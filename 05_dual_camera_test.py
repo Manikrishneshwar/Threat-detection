@@ -101,8 +101,12 @@ def main():
                 break
             elif k == ord("w"):
                 cams["left"], cams["right"] = cams["right"], cams["left"]
+                if maps is not None:
+                    # Each calibration belongs to a physical camera, so it has to swap along with it.
+                    maps["left"], maps["right"] = maps["right"], maps["left"]
                 print(f"Swapped. Left is now index {cams['left'].index} and right is "
-                      f"index {cams['right'].index}. Update config.CAMERAS to make it stick.")
+                      f"index {cams['right'].index}. To make it stick, update config.CAMERAS "
+                      "and swap the files in calib/ too.")
             elif k == ord("l"):
                 lines = not lines
             elif k == ord("u") and maps is not None:

@@ -8,11 +8,14 @@ ROOT = Path(__file__).resolve().parent
 # same way the cameras do. Get the indices from 00_list_cameras.py.
 # Windows numbers cameras in the order it finds them, so keep each one plugged
 # into the same USB port or the indices can swap after a replug or reboot.
-# Probe on 2026-11-11: 0 = laptop webcam, 1 & 3 = black (probably IR / virtual cams),
-# 2 & 4 = the two ELP fisheyes.
+# Probe on 2026-11-15: 0 = laptop webcam, 1 & 4 = black (probably IR / virtual cams),
+# 2 & 3 = the two ELP fisheyes. Index 3 is the one mounted on the left of the rig
+# (checked with a test pair on 2026-11-15, since near objects shifted the wrong way with 2 as left).
+# The names were swapped then, calibration files and image folders included, so
+# calib/left_* still belongs to the camera that's physically on the left.
 CAMERAS = {
-    "left": 2,
-    "right": 4,
+    "left": 3,
+    "right": 2,
 }
 
 # A calibration only holds at the resolution it was made at.
@@ -36,6 +39,13 @@ CALIB_IMG_DIR = DATA_DIR / "calib_images"   # one folder per camera: <name>/img_
 PAIRS_DIR = DATA_DIR / "pairs"              # left/right pairs captured together
 CALIB_DIR = ROOT / "calib"                  # calibration results (.yml)
 OUTPUT_DIR = ROOT / "output"                # debug images
+
+
+STEREO_PATH = CALIB_DIR / "stereo.yml"
+
+# Measured 2026-11-15 with a tape between the same point on each lens. Only used as a
+# sanity check; the stereo calibration measures the real value.
+BASELINE_TAPE_MM = 117.0
 
 
 def intrinsics_path(name: str) -> Path:

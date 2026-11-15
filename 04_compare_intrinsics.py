@@ -18,7 +18,17 @@ import numpy as np
 
 import config
 from stereo.calib_io import load_intrinsics
-from stereo.fisheye_calib import undistort_maps
+from stereo.fisheye_calib import undistort_maps, valid_theta_max
+
+
+def in_valid_range(pts, calib):
+    """True for raw pixels that sit inside the angle where this calibration's lens model holds."""
+    K, k = calib["K"], np.asarray(calib["D"], np.float64).ravel()
+    t = valid_theta_max(calib["D"])
+    r_max = t * (1 + k[0] * t**2 + k[1] * t**4 + k[2] * t**6 + k[3] * t**8)
+    p = pts.reshape(-1, 2)
+    r = np.hypot((p[:, 0] - K[0, 2]) / K[0, 0], (p[:, 1] - K[1, 2]) / K[1, 1])
+    return r < r_max
 
 
 def main():
@@ -55,7 +65,10 @@ def main():
     raw = np.stack([xs.ravel(), ys.ravel()], 1).reshape(-1, 1, 2).astype(np.float64)
     pa = cv2.fisheye.undistortPoints(raw, A["K"], A["D"], P=K_new).reshape(-1, 2)
     pb = cv2.fisheye.undistortPoints(raw, B["K"], B["D"], P=K_new).reshape(-1, 2)
-    inside = ((pa[:, 0] >= 0) & (pa[:, 0] < w) & (pa[:, 1] >= 0) & (pa[:, 1] < h)
+    # Only compare pixels where both lens models are valid. Out past that (like the black
+    # image corners) OpenCV returns garbage that can be millions of pixels off.
+    valid = in_valid_range(raw, A) & in_valid_range(raw, B)
+    inside = (valid & (pa[:, 0] >= 0) & (pa[:, 0] < w) & (pa[:, 1] >= 0) & (pa[:, 1] < h)
               & np.isfinite(pa).all(1) & np.isfinite(pb).all(1))
     d = (pb - pa)[inside]
     dx, dy = np.abs(d[:, 0]), np.abs(d[:, 1])
