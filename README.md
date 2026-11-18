@@ -21,10 +21,12 @@ stereo/                    reusable library code
 05_dual_camera_test.py     step 3: both cameras live together, FPS + sync skew; s saves pairs
 06_stereo_calibrate.py     steps 4-5: stereo calibration + rectification -> calib/stereo.yml
 07_depth_live.py           step 6: live depth map and distance at a crosshair
+08_capture_detect_images.py  capture obstacle images (stairs, poles...) for YOLO
 make_checkerboard.py       printable calibration target
 calib/                     calibration results (*.yml)
 data/calib_images/<name>/  checkerboard captures per camera
 data/pairs/                left/right image pairs
+data/detect/<class>/       YOLO captures: rect_left/ (label these), left/, right/
 output/                    debug images
 ```
 

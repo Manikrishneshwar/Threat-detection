@@ -39,6 +39,7 @@ CALIB_IMG_DIR = DATA_DIR / "calib_images"   # one folder per camera: <name>/img_
 PAIRS_DIR = DATA_DIR / "pairs"              # left/right pairs captured together
 CALIB_DIR = ROOT / "calib"                  # calibration results (.yml)
 OUTPUT_DIR = ROOT / "output"                # debug images
+DETECT_DIR = DATA_DIR / "detect"            # obstacle images for YOLO: <class>/{rect_left,left,right}/
 
 
 STEREO_PATH = CALIB_DIR / "stereo.yml"
